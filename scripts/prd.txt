@@ -1,0 +1,79 @@
+# 개요  
+Linex는 프로젝트의 객체, 컴포넌트, 스키마, 의존성을 LLM(대형 언어 모델) 친화적으로 실시간 관리하고,  
+CLI 및 MCP(Agent)와 연동하여 문서화, 가이드, 자동화까지 지원하는 차세대 플랫폼 라이브러리입니다.  
+Linex는 대규모 프론트엔드/백엔드 프로젝트에서 복잡한 의존성, 문서화, 자동화 문제를 혁신적으로 해결합니다.
+
+# 핵심 기능  
+- LLM Friendly 메타데이터 래핑: 기존 스키마/컴포넌트/객체를 LLM이 이해하기 쉽도록 자동 변환  
+- 실시간 감시 및 핫 리로드: 코드/스키마/컴포넌트 변경 시 자동으로 래핑, 문서화, 의존성 갱신  
+- CLI 도구:  
+  - linex list: 모든 객체/스키마/컴포넌트/의존성 출력  
+  - linex show [name]: 상세 정보/문서/관계 출력  
+  - linex deps: 의존성 트리 시각화  
+  - linex watch: 실시간 감시 및 핫 리로드  
+  - linex mcp [name]: MCP/Agent 연동 공식 문서/가이드 제공  
+- MCP/Agent 연동: context7, taskmaster 등과 연동해 공식 문서, 가이드, 자동화 피드백 제공  
+- TypeScript 기반, 테스트/문서화/CI 내장
+
+# 사용자 경험  
+- 주요 사용자:  
+  - 대규모 프론트엔드/백엔드 프로젝트의 개발자  
+  - LLM 기반 자동화/문서화/의존성 관리가 필요한 팀  
+- 주요 플로우:  
+  1. Linex로 스키마/컴포넌트/객체를 래핑  
+  2. CLI로 실시간 상태/의존성/문서화 확인  
+  3. MCP/Agent로 공식 문서/가이드/자동화 피드백 활용  
+- UI/UX 고려사항:  
+  - CLI 기반의 직관적 명령어  
+  - 웹 대시보드(확장 예정)  
+  - 실시간 피드백/알림
+
+# 기술 아키텍처  
+- 시스템 구성요소:  
+  - core: LLM Friendly 래퍼, 의존성 관리  
+  - cli: 명령어 인터페이스  
+  - watcher: 파일 감시/핫 리로드  
+  - mcp: MCP/Agent 연동  
+- 데이터 모델:  
+  - LinexMeta: LLM Friendly 메타데이터 객체  
+  - DependencyGraph: 의존성 트리  
+- 인프라 요구사항:  
+  - Node.js 18+  
+  - TypeScript  
+
+# 개발 로드맵  
+- MVP 요구사항:  
+  - LLM Friendly 래퍼 함수  
+  - CLI 명령어: list, show, deps, watch  
+  - 파일 감시/핫 리로드  
+  - MCP 연동(기본)  
+  - 테스트/문서화/CI  
+- 향후 확장:  
+  - 웹 대시보드  
+  - REST/GraphQL API  
+  - 더 다양한 MCP/Agent 연동  
+  - 커스텀 플러그인 시스템
+
+# 논리적 의존성 체인  
+- 1단계: LLM Friendly 래퍼 및 데이터 모델 구현  
+- 2단계: CLI 명령어 및 의존성 트리 관리  
+- 3단계: 파일 감시/핫 리로드  
+- 4단계: MCP/Agent 연동  
+- 5단계: 테스트/문서화/CI  
+- 6단계: 웹 대시보드, API, 플러그인 등 확장
+
+# 리스크 및 대응 방안  
+- 기술적 난이도: LLM Friendly 자동화의 정확도 → 테스트/피드백 반복  
+- MCP/Agent 연동의 복잡성: 공식 문서/가이드와의 호환성 → 표준화된 인터페이스 설계  
+- 확장성: 대규모 프로젝트 적용 시 성능 → 모듈화/최적화
+
+# 부록  
+- 참고 자료:  
+  - context7, taskmaster 공식 문서  
+  - Babel, Storybook, Zod 등 오픈소스 구조  
+- 기술 명세:  
+  - TypeScript 5.x  
+  - Node.js 18+  
+  - ESM 모듈  
+  - Jest/Vitest 기반 테스트  
+  - GitHub Actions CI
