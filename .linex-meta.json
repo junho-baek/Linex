@@ -25,7 +25,7 @@
               "language": "ko-KR"
             }
           },
-          "createdAt": "2025-05-24T14:28:25.168Z",
+          "createdAt": "2025-05-24T14:43:04.204Z",
           "isActive": true
         },
         "name": "UserSchema",
@@ -82,7 +82,7 @@
             "type": "string",
             "description": "",
             "required": true,
-            "defaultValue": "2025-05-24T14:28:25.168Z"
+            "defaultValue": "2025-05-24T14:43:04.204Z"
           },
           "isActive": {
             "type": "boolean",
@@ -225,7 +225,7 @@
             }
           ],
           "status": "pending",
-          "createdAt": "2025-05-24T14:28:25.170Z"
+          "createdAt": "2025-05-24T14:43:04.206Z"
         },
         "name": "OrderClass",
         "description": "주문 클래스",
@@ -264,7 +264,7 @@
             "type": "date",
             "description": "",
             "required": true,
-            "defaultValue": "2025-05-24T14:28:25.170Z"
+            "defaultValue": "2025-05-24T14:43:04.206Z"
           }
         },
         "examples": [],
@@ -396,7 +396,7 @@
                 "language": "ko-KR"
               }
             },
-            "createdAt": "2025-05-24T14:28:25.168Z",
+            "createdAt": "2025-05-24T14:43:04.204Z",
             "isActive": true
           },
           "name": "UserSchema",
@@ -453,7 +453,7 @@
               "type": "string",
               "description": "",
               "required": true,
-              "defaultValue": "2025-05-24T14:28:25.168Z"
+              "defaultValue": "2025-05-24T14:43:04.204Z"
             },
             "isActive": {
               "type": "boolean",
@@ -596,7 +596,7 @@
               }
             ],
             "status": "pending",
-            "createdAt": "2025-05-24T14:28:25.170Z"
+            "createdAt": "2025-05-24T14:43:04.206Z"
           },
           "name": "OrderClass",
           "description": "주문 클래스",
@@ -635,7 +635,7 @@
               "type": "date",
               "description": "",
               "required": true,
-              "defaultValue": "2025-05-24T14:28:25.170Z"
+              "defaultValue": "2025-05-24T14:43:04.206Z"
             }
           },
           "examples": [],

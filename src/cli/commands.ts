@@ -86,73 +86,216 @@ class ListCommand {
   }
 }
 
+class ShowCommand {
+  name = "show";
+  description = "Show detailed information about a specific object";
+
+  configure(program: Command) {
+    program
+      .command("show <name>")
+      .description(this.description)
+      .option("-f, --format <format>", "Output format (text, json)", "text")
+      .option("-d, --dependencies", "Show dependencies")
+      .option("-r, --dependents", "Show dependents")
+      .action(this.execute.bind(this));
+  }
+
+  async execute(name: string, options: any) {
+    printHeaderOnce();
+    const meta = get(name);
+    if (!meta) {
+      console.log(chalk.red(`No object found with name "${name}"`));
+      return;
+    }
+
+    // JSON 포맷 지원
+    if (options.format === "json") {
+      console.log(JSON.stringify(meta, null, 2));
+      return;
+    }
+
+    // 기본 텍스트 포맷
+    console.log(
+      boxen(
+        `${chalk.bold(meta.name)}\n${chalk.gray(meta.description || "")}\n${chalk.green("Type:")} ${meta.type}`,
+        { borderColor: "green", padding: 1 },
+      ),
+    );
+
+    // documentation
+    if (meta.documentation) {
+      console.log(chalk.yellow("Documentation:"));
+      console.log(
+        boxen(meta.documentation, { borderColor: "yellow", padding: 1 }),
+      );
+    }
+
+    // properties
+    if (meta.properties) {
+      console.log(chalk.blue("Properties:"));
+      for (const [key, prop] of Object.entries(meta.properties)) {
+        console.log(
+          boxen(
+            `${chalk.bold(key)}: ${chalk.magenta(prop.type)}\n${chalk.gray(prop.description)}`,
+            { borderColor: "blue", padding: 0.5 },
+          ),
+        );
+      }
+    }
+
+    // methods
+    if (meta.methods) {
+      console.log(chalk.magenta("Methods:"));
+      for (const [key, method] of Object.entries(meta.methods)) {
+        console.log(
+          boxen(
+            `${chalk.bold(key)}(${Object.keys(method.parameters).join(", ")}): ${chalk.cyan(method.returnType)}\n${chalk.gray(method.description)}`,
+            { borderColor: "magenta", padding: 0.5 },
+          ),
+        );
+      }
+    }
+
+    // examples
+    if (meta.examples && meta.examples.length > 0) {
+      console.log(chalk.cyan("Examples:"));
+      for (const ex of meta.examples) {
+        console.log(
+          boxen(
+            chalk.gray(
+              typeof ex === "string" ? ex : JSON.stringify(ex, null, 2),
+            ),
+            { borderColor: "cyan", padding: 0.5 },
+          ),
+        );
+      }
+    }
+
+    // tags
+    if (meta.tags && meta.tags.length > 0) {
+      console.log(
+        chalk.gray("Tags:"),
+        meta.tags.map((t) => chalk.bgBlue(t)).join(" "),
+      );
+    }
+
+    // dependencies
+    if (options.dependencies) {
+      const registry = LinexRegistry.getInstance();
+      const deps = registry.getDependencies(name);
+      console.log(
+        chalk.yellow("Dependencies:"),
+        deps.map((d) => d.name).join(", ") || "None",
+      );
+    }
+
+    // dependents
+    if (options.dependents) {
+      const registry = LinexRegistry.getInstance();
+      const deps = registry.getDependents(name);
+      console.log(
+        chalk.yellow("Dependents:"),
+        deps.map((d) => d.name).join(", ") || "None",
+      );
+    }
+  }
+}
+
+class DepsCommand {
+  name = "deps";
+  description = "Visualize dependency tree";
+
+  configure(program: Command) {
+    program
+      .command("deps")
+      .description(this.description)
+      .option("-n, --name <name>", "Focus on specific object")
+      .option("-d, --depth <depth>", "Maximum depth to display", "3")
+      .option(
+        "-f, --format <format>",
+        "Output format (tree, dot, json)",
+        "tree",
+      )
+      .action(this.execute.bind(this));
+  }
+
+  async execute(options: any) {
+    printHeaderOnce();
+    const registry = LinexRegistry.getInstance();
+
+    // 1. 포커스 대상 결정
+    let roots: string[];
+    if (options.name) {
+      roots = [options.name];
+    } else {
+      // 의존성 없는 노드(루트) 찾기
+      const all = registry.getAll();
+      const dependents = new Set();
+      for (const meta of all) {
+        const deps = registry.getDependencies(meta.name);
+        for (const dep of deps) dependents.add(dep.name);
+      }
+      roots = all.map((m) => m.name).filter((n) => !dependents.has(n));
+    }
+
+    // 2. 깊이 제한 파싱
+    const maxDepth = parseInt(options.depth, 10) || 3;
+
+    // 3. 그래프 포맷별 출력
+    if (options.format === "json") {
+      const graph = registry["dependencyGraph"].toJSON();
+      console.log(JSON.stringify(graph, null, 2));
+    } else if (options.format === "dot") {
+      console.log(this.visualizeDot(registry, roots, maxDepth));
+    } else {
+      // 기본: 트리(ASCII)
+      for (const root of roots) {
+        this.printTree(registry, root, maxDepth);
+      }
+    }
+  }
+
+  printTree(
+    registry: LinexRegistry,
+    node: string,
+    maxDepth: number,
+    depth = 0,
+    prefix = "",
+  ) {
+    if (depth > maxDepth) return;
+    console.log(prefix + (depth === 0 ? chalk.bold(node) : "├─ " + node));
+    const deps = registry.getDependencies(node);
+    for (const dep of deps) {
+      this.printTree(registry, dep.name, maxDepth, depth + 1, prefix + "   ");
+    }
+  }
+
+  visualizeDot(
+    registry: LinexRegistry,
+    roots: string[],
+    maxDepth: number,
+  ): string {
+    let dot = "digraph G {\n";
+    const visited = new Set();
+    const walk = (node: string, depth: number) => {
+      if (depth > maxDepth || visited.has(node)) return;
+      visited.add(node);
+      const deps = registry.getDependencies(node);
+      for (const dep of deps) {
+        dot += `  "${node}" -> "${dep.name}";\n`;
+        walk(dep.name, depth + 1);
+      }
+    };
+    for (const root of roots) walk(root, 0);
+    dot += "}";
+    return dot;
+  }
+}
+
 export function registerCommands(program: Command) {
   new ListCommand().configure(program);
-
-  program
-    .command("show <name>")
-    .description("Show details of a registered object")
-    .action((name) => {
-      printHeaderOnce();
-      console.log(
-        boxen(
-          chalk.yellow(`linex show ${name}`) +
-            "\n\n" +
-            chalk.gray(
-              "Show detailed metadata and properties for a registered object.",
-            ),
-          { borderColor: "yellow", padding: 1 },
-        ),
-      );
-      const meta = get(name);
-      if (!meta) {
-        console.log(chalk.red(`No object found with name "${name}"`));
-        return;
-      }
-      console.log(
-        boxen(
-          `${chalk.bold(meta.name)}\n${chalk.gray(meta.description || "")}\n${chalk.green(
-            "Type:",
-          )} ${meta.type}`,
-          { borderColor: "green", padding: 1 },
-        ),
-      );
-      if (meta.properties) {
-        console.log(chalk.blue("Properties:"));
-        for (const [key, prop] of Object.entries(meta.properties)) {
-          console.log(
-            boxen(
-              `${chalk.bold(key)}: ${chalk.magenta(prop.type)}\n${chalk.gray(
-                prop.description,
-              )}`,
-              { borderColor: "blue", padding: 0.5 },
-            ),
-          );
-        }
-      }
-    });
-
-  program
-    .command("deps")
-    .description("Show dependency graph")
-    .action(() => {
-      printHeaderOnce();
-      console.log(
-        boxen(
-          chalk.yellow("linex deps") +
-            "\n\n" +
-            chalk.gray(
-              "Visualize the dependency graph of all registered objects.",
-            ),
-          { borderColor: "yellow", padding: 1 },
-        ),
-      );
-      const registry = LinexRegistry.getInstance();
-      const graphStr = registry["dependencyGraph"].visualize();
-      console.log(
-        boxen(chalk.magenta(graphStr), { borderColor: "magenta", padding: 1 }),
-      );
-    });
+  new ShowCommand().configure(program);
+  new DepsCommand().configure(program);
 
   program
     .command("demo-register")
@@ -225,16 +368,6 @@ export function registerCommands(program: Command) {
         "UserSchema",
       );
       registry.saveToFile();
-
-      // 3. 디버깅 로그 (필요시)
-      console.log(
-        "edges",
-        Array.from(registry["dependencyGraph"]["edges"].entries()),
-      );
-      console.log(
-        "nodes",
-        Array.from(registry["dependencyGraph"]["nodes"].keys()),
-      );
 
       // 4. 안내 메시지
       console.log(
