@@ -7,6 +7,7 @@ import path from "path";
 import { createRequire } from "module";
 import { pathToFileURL } from "url";
 import Table from "cli-table3";
+import { WatchCommand } from "./commands/watch-command.js";
 const require = createRequire(import.meta.url);
 function printHeaderOnce() {
     if (global.__linexHeaderPrinted)
@@ -233,6 +234,7 @@ export function registerCommands(program) {
     new ListCommand().configure(program);
     new ShowCommand().configure(program);
     new DepsCommand().configure(program);
+    new WatchCommand().configure(program);
     program
         .command("demo-register")
         .description("Register a demo object")

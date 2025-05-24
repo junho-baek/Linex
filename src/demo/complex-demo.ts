@@ -105,3 +105,14 @@ export class NotificationService {
     return this.subscribers.map((id) => ({ id, message }));
   }
 }
+
+// 주소 스키마
+export const addressSchema = {
+  id: "addr_001",
+  userId: "user_001",
+  street: "123 Main St",
+  city: "Seoul",
+  zip: "12345",
+  country: "KR",
+  isDefault: true,
+};
