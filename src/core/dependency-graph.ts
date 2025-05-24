@@ -61,12 +61,13 @@ export class DependencyGraph {
 
   visualize(): string {
     let result = "";
-    for (const [from, deps] of this.edges.entries()) {
-      if (deps.size === 0) {
-        result += `[${from}] (no dependencies)\n`;
+    for (const name of this.nodes.keys()) {
+      const deps = this.edges.get(name);
+      if (!deps || deps.size === 0) {
+        result += `[${name}] (no dependencies)\n`;
       } else {
         for (const to of deps) {
-          result += `[${from}] ──▶ [${to}]\n`;
+          result += `[${name}] ──▶ [${to}]\n`;
         }
       }
     }

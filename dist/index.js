@@ -1,14 +1,11 @@
-import { DependencyGraph } from "./core/dependency-graph.js";
-const makeMeta = (name) => ({
-    original: {},
-    name,
-    description: "",
-    type: "schema",
-});
-const graph = new DependencyGraph();
-const metaA = makeMeta("A");
-const metaB = makeMeta("B");
-graph.addNode(metaA);
-graph.addNode(metaB);
-graph.addDependency("A", "B");
-console.log(graph.visualize());
+import { LinexRegistry } from "./core/linex-registry.js";
+const registry = LinexRegistry.getInstance();
+export function register(object, options) {
+    return registry.register(object, options);
+}
+export function get(name) {
+    return registry.get(name);
+}
+export function getAll() {
+    return registry.getAll();
+}

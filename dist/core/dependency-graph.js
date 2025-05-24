@@ -20,6 +20,11 @@ export class DependencyGraph {
         if (!this.edges.has(from))
             this.edges.set(from, new Set());
         this.edges.get(from).add(to);
+        // 사이클 체크
+        if (this.hasCycle()) {
+            this.edges.get(from).delete(to); // 롤백
+            throw new Error(`Adding dependency ${from} -> ${to} creates a cycle!`);
+        }
     }
     removeDependency(from, to) {
         this.edges.get(from)?.delete(to);
@@ -48,10 +53,59 @@ export class DependencyGraph {
     }
     visualize() {
         let result = "";
-        for (const [from, deps] of this.edges.entries()) {
-            result += `${from} -> [${Array.from(deps).join(", ")}]
-`;
+        for (const name of this.nodes.keys()) {
+            const deps = this.edges.get(name);
+            if (!deps || deps.size === 0) {
+                result += `[${name}] (no dependencies)\n`;
+            }
+            else {
+                for (const to of deps) {
+                    result += `[${name}] ──▶ [${to}]\n`;
+                }
+            }
         }
         return result.trim();
+    }
+    hasCycle() {
+        const visited = new Set();
+        const recStack = new Set();
+        const visit = (node) => {
+            if (!visited.has(node)) {
+                visited.add(node);
+                recStack.add(node);
+                for (const dep of this.edges.get(node) || []) {
+                    if (!visited.has(dep) && visit(dep))
+                        return true;
+                    else if (recStack.has(dep))
+                        return true;
+                }
+            }
+            recStack.delete(node);
+            return false;
+        };
+        for (const node of this.nodes.keys()) {
+            if (visit(node))
+                return true;
+        }
+        return false;
+    }
+    toJSON() {
+        return {
+            nodes: Array.from(this.nodes.entries()),
+            edges: Array.from(this.edges.entries()).map(([k, v]) => [
+                k,
+                Array.from(v),
+            ]),
+        };
+    }
+    static fromJSON(json) {
+        const graph = new DependencyGraph();
+        for (const [name, meta] of json.nodes) {
+            graph.nodes.set(name, meta);
+        }
+        for (const [from, toArr] of json.edges) {
+            graph.edges.set(from, new Set(toArr));
+        }
+        return graph;
     }
 }

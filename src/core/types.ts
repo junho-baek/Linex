@@ -26,7 +26,7 @@ export interface LinexMeta<T> {
 
 /** 속성 메타데이터 */
 export interface PropertyMeta {
-  /** 타입 문자열 (예: 'string', 'number[]') */
+  /** 타입 문자열 (예: 'string', 'number[]', 'array', 'null', 'object', 'function' 등) */
   type: string;
   /** 설명 */
   description: string;

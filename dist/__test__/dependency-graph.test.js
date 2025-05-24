@@ -61,6 +61,46 @@ describe("DependencyGraph", () => {
         graph.addNode(metaB);
         graph.addDependency("A", "B");
         const vis = graph.visualize();
-        expect(vis).toContain("A -> [B]");
+        expect(vis.replace(/\s/g, "")).toContain("[A]──▶[B]");
+    });
+    it("그래프 직렬화/역직렬화", () => {
+        const graph = new DependencyGraph();
+        const metaA = makeMeta("A");
+        const metaB = makeMeta("B");
+        graph.addNode(metaA);
+        graph.addNode(metaB);
+        graph.addDependency("A", "B");
+        const json = graph.toJSON();
+        const restored = DependencyGraph.fromJSON(json);
+        expect(restored
+            .getAll()
+            .map((m) => m.name)
+            .sort()).toEqual(["A", "B"]);
+        expect(restored.getDependencies("A")[0].name).toBe("B");
+        expect(restored.visualize().replace(/\s/g, "")).toContain("[A]──▶[B]");
+    });
+    it("사이클 감지: 순환 의존성 추가 시 에러 발생", () => {
+        const graph = new DependencyGraph();
+        const metaA = makeMeta("A");
+        const metaB = makeMeta("B");
+        graph.addNode(metaA);
+        graph.addNode(metaB);
+        graph.addDependency("A", "B");
+        expect(() => graph.addDependency("B", "A")).toThrow(/cycle/i);
+    });
+    it("사이클 감지: hasCycle() 직접 호출", () => {
+        const graph = new DependencyGraph();
+        const metaA = makeMeta("A");
+        const metaB = makeMeta("B");
+        const metaC = makeMeta("C");
+        graph.addNode(metaA);
+        graph.addNode(metaB);
+        graph.addNode(metaC);
+        graph.addDependency("A", "B");
+        graph.addDependency("B", "C");
+        // 아직 사이클 없음
+        expect(graph.hasCycle()).toBe(false);
+        // 사이클 생성 시도 → 예외 발생해야 함
+        expect(() => graph.addDependency("C", "A")).toThrow(/cycle/i);
     });
 });

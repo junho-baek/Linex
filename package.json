@@ -22,6 +22,7 @@
   },
   "keywords": [],
   "devDependencies": {
+    "@types/figlet": "^1.7.0",
     "eslint": "^9.27.0",
     "globals": "^16.1.0",
     "prettier": "^3.5.3",
@@ -31,6 +32,14 @@
   },
   "dependencies": {
     "@types/reflect-metadata": "^0.0.5",
+    "boxen": "^8.0.1",
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
+    "commander": "^14.0.0",
+    "figlet": "^1.8.1",
     "reflect-metadata": "^0.2.2"
+  },
+  "bin": {
+    "linex": "./dist/bin/linex.js"
   }
 }

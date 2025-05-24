@@ -1,4 +1,4 @@
-import { LinexRegistry } from "./core/linex-registry";
+import { LinexRegistry } from "./core/linex-registry.js";
 import { RegisterOptions } from "./core/types";
 
 const registry = LinexRegistry.getInstance();
