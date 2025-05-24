@@ -14,3 +14,13 @@ export function wrapSchema<T>(schema: T, options?: WrapOptions): LinexMeta<T> {
     tags: options?.autoTag ? ["schema"] : [],
   };
 }
+export function wrapObject<T>(object: T, options?: any): LinexMeta<T> {
+  // 간단 예시
+  return {
+    original: object,
+    name: options?.name || "Object",
+    description: options?.description || "",
+    type: "object",
+    properties: {}, // 실제 구현 필요
+  };
+}

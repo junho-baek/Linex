@@ -114,4 +114,5 @@ export class DependencyGraph {
     }
     return graph;
   }
+  //시각화 포맷 다양화: visualizeMermaid(), visualizeTree() 등 다양한 출력 지원 예정
 }

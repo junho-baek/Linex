@@ -69,3 +69,12 @@ export interface WrapOptions {
   /** 자동 태그 생성 여부 */
   autoTag?: boolean;
 }
+// src/core/types.ts
+export type RegistryEvent = "registered" | "unregistered" | "metadata-changed";
+
+export interface RegisterOptions {
+  name?: string;
+  description?: string;
+  type?: "schema" | "component" | "object";
+  autoTag?: boolean;
+}

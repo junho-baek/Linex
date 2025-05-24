@@ -1,19 +1,16 @@
-import { DependencyGraph } from "./core/dependency-graph.js";
-import { LinexMeta } from "./core/types.js";
+import { LinexRegistry } from "./core/linex-registry";
+import { RegisterOptions } from "./core/types";
 
-const makeMeta = (name: string): LinexMeta<any> => ({
-  original: {},
-  name,
-  description: "",
-  type: "schema",
-});
+const registry = LinexRegistry.getInstance();
 
-const graph = new DependencyGraph();
-const metaA = makeMeta("A");
-const metaB = makeMeta("B");
+export function register<T>(object: T, options?: RegisterOptions) {
+  return registry.register(object, options);
+}
 
-graph.addNode(metaA);
-graph.addNode(metaB);
-graph.addDependency("A", "B");
+export function get<T>(name: string) {
+  return registry.get<T>(name);
+}
 
-console.log(graph.visualize());
+export function getAll() {
+  return registry.getAll();
+}
