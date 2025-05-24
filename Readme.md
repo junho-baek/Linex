@@ -4,7 +4,12 @@
 
 ---
 
+![Linex Logo](./Logo.png)
+
 ## Overview
+
+![Linex CLI List Command Example](./img1.png)
+![Linex CLI Show Command Example](./img2.png)
 
 Linex is a next-generation platform library and CLI tool that enables real-time, LLM-friendly management of project objects, components, schemas, and dependencies.  
 It is designed to solve the complexity of dependency tracking, documentation, and automation in large-scale frontend and backend projects.  
@@ -133,10 +138,11 @@ npm run build
 npm run test
 
 # Try the CLI (after build)
-npx linex list
-npx linex show [name]
-npx linex deps
-npx linex watch
+linex demo-complex
+linex list
+linex show [name]
+linex deps
+linex watch
 ```
 
 ---
