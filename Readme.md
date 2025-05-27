@@ -149,13 +149,13 @@ linex watch
 
 ## CLI Reference
 
-| Command              | Description                              |
-| -------------------- | ---------------------------------------- |
-| `linex list`         | List all registered objects/schemas/etc. |
-| `linex show `        | Show detailed info for a specific object |
-| `linex deps`         | Visualize dependency tree                |
-| `linex watch`        | Watch files for changes (hot reload)     |
-| `linex demo-complex` | Register a complex demo dataset          |
+| Command              | Description                                                                                                                                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `linex list`         | List all registered objects/schemas/etc. <br>Options:<br> `-t, --type <type>` (schema, component, object)<br> `-f, --format <format>` (table, json) – default: `table`<br> `-s, --sort <field>` (name, type) – default: `name` |
+| `linex show <name>`  | Show detailed info for a specific object <br>Options:<br> `-f, --format <format>` (text, json) – default: `text`<br> `-d, --dependencies` – show dependencies<br> `-r, --dependents` – show dependents                         |
+| `linex deps`         | Visualize dependency tree <br>Options:<br> `-n, --name <name>` – focus on specific object<br> `-d, --depth <depth>` – max depth (default: 3)<br> `-f, --format <format>` (tree, dot, json) – default: `tree`                   |
+| `linex watch`        | Watch files for changes (hot reload) <br>Options:<br> `--entry <file>` – entry file to start watching (default: `src/index.ts`)                                                                                                |
+| `linex demo-complex` | Register a complex demo dataset                                                                                                                                                                                                |
 
 For more, run `linex --help`.
 
